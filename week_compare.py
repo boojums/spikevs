@@ -66,8 +66,11 @@ def main():
     spike_total = get_weekly_total(spike_id)
     diff = spike_total - cristina_total
 
-    with open('diff.txt', 'r') as f:
-        prev_diff = int(f.read())
+    try:
+        with open('diff.txt', 'r') as f:
+            prev_diff = int(f.read())
+    except:
+        prev_diff = 0
 
     if prev_diff != diff:
         with open('diff.txt', 'w') as f:
