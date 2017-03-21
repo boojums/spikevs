@@ -38,21 +38,23 @@ def send_email(msg):
     server.quit()
 
 
-def generate_msg(cristina_total, spike_total):
-    diff = spike_total - cristina_total
-
-    if diff < 0:
+def generate_msg(diff, prev_diff):
+    ''' Generate email message to send to annoy spike. '''
+    if diff == 0:
+        msg = MIMEText('The race is tight! You and Cristina have trained '
+                       'the same number of minutes over the past week!')
+        status = 'tied!'
+    elif diff < prev_diff:
         msg = MIMEText('Oh no! Better get training! '
                        'Cristina currently has {} more '
                        'minutes than you over the past week!'.format(-diff))
-    elif diff > 0:
+        status = '{} minutes behind'.format(-diff)
+    elif diff > prev_diff:
         msg = MIMEText('You seem motivated this week, with {} more '
                        'minutes of training than Cristina.'.format(diff))
-    else:
-        msg = MIMEText('The race is tight! You and Cristina have trained '
-                       'the same number of minutes over the past week!')
+        status = '{} minutes ahead'.format(diff)
 
-    msg['Subject'] = 'Spikevs status: {} minutes'.format(diff)
+    msg['Subject'] = 'Spikevs status change: ' + status
     msg['From'] = settings.EMAIL_HOST_USER
     msg['To'] = settings.EMAIL_RECIPIENT
 
@@ -62,8 +64,21 @@ def generate_msg(cristina_total, spike_total):
 def main():
     cristina_total = get_weekly_total(cristina_id)
     spike_total = get_weekly_total(spike_id)
+    diff = spike_total - cristina_total
 
-    msg = generate_msg(cristina_total, spike_total)
+    with open('diff.txt', 'r') as f:
+        prev_diff = int(f.read())
+
+    if prev_diff != diff:
+        with open('diff.txt', 'w') as f:
+            f.write(str(diff))
+
+    # Check for sign change
+    if diff * prev_diff > 0:
+        return
+
+    # There's a change! Send an obnoxious email!
+    msg = generate_msg(diff, prev_diff)
     send_email(msg)
 
 if __name__ == '__main__':
