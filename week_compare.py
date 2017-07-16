@@ -1,10 +1,13 @@
 import smtplib
 from email.mime.text import MIMEText
+import logging
 
 import requests
 from bs4 import BeautifulSoup
 
 import settings
+
+logging.basicConfig(level=settings.LOG_LEVEL)
 
 cristina_id = 470
 spike_id = 29
@@ -73,7 +76,10 @@ def main():
     except:
         prev_diff = 0
 
+    logging.info('spike: {}  cristina: {}'.format(spike_total, cristina_total))
+
     if prev_diff != diff:
+        logging.info('recorded diff of {}'.format(diff))
         with open('diff.txt', 'w') as f:
             f.write(str(diff))
 
@@ -84,6 +90,8 @@ def main():
     # There's a change! Send an obnoxious email!
     msg = generate_msg(diff, prev_diff)
     send_email(msg)
+    logging.info('email sent')
+
 
 if __name__ == '__main__':
     main()

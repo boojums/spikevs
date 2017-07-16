@@ -10,3 +10,7 @@ EMAIL_HOST_PASSWORD = 'yourpassword'
 
 # Who to send the updates to
 EMAIL_RECIPIENT = "spike@spikesemail.com"
+
+# Set the desired log level
+import logging
+LOG_LEVEL =logging.INFO
