@@ -40,7 +40,7 @@ def send_email(msg):
 
 def generate_msg(diff, prev_diff):
     ''' Generate email message to send to annoy spike. '''
-    if diff == 0:
+    if diff == 0 and prev_diff != 0:
         msg = MIMEText('The race is tight! You and Cristina have trained '
                        'the same number of minutes over the past week!')
         status = 'tied!'
