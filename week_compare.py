@@ -24,6 +24,7 @@ def get_weekly_total(log_id):
     except:
         # weaksauce
         m, s = total.strip().split(':')
+        h = 0
 
     # ignore seconds, that's petty and Spike doesn't use them anyway
     total = int(h)*60 + int(m)
